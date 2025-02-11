@@ -1,0 +1,128 @@
+SELECT *
+FROM dbo.crime_data;
+
+
+---What is the Average age of the offender under 40 by race.--
+
+
+SELECT Offender_Race, AVG(Offender_Age) AS avg_age
+FROM dbo.crime_data
+GROUP BY Offender_Race
+HAVING AVG(Offender_Age) <= 40;
+
+
+SELECT COUNT(*) AS all_age
+FROM dbo.crime_data
+WHERE Offender_Age < 25;
+ 
+
+ --How Many crime incidents are recorded in the data?--
+
+
+SELECT COUNT(Report_Type) AS total_num_of_crime
+FROM dbo.crime_data;
+
+
+--What are the unique genders of the victims present?
+
+
+SELECT DISTINCT Offender_Gender, Victim_Gender
+FROM dbo.crime_data;
+
+
+--What is the average age of offenders?--
+
+
+SELECT AVG(Offender_Age) AS avg_Offender_age
+FROM dbo.crime_data;
+
+
+--How many crimes are reported in each category?--
+
+
+SELECT Category, COUNT(*) AS crime_count
+FROM dbo.crime_data
+GROUP BY Category
+ORDER BY crime_count DESC;
+
+
+--What are the different dispositions assigned to the crimes, 
+--and how many incidents fall under each dispostions?--
+
+
+SELECT Disposition, COUNT(*) AS incident_count
+FROM dbo.crime_data
+GROUP BY Disposition
+ORDER BY incident_count;
+
+
+--How many offenders belong to each race--
+
+
+SELECT Offender_Race, COUNT(*) AS num_of_offenders
+FROM dbo.crime_data
+GROUP BY Offender_race;
+
+
+--What is the distribution of victim fatal status categorized by victim gender?--
+
+
+SELECT Victim_Gender, Victim_Fatal_Status, COUNT(*) AS incident_count
+FROM dbo.crime_data
+GROUP BY Victim_Gender, Victim_Fatal_Status
+ORDER BY Victim_Gender, Victim_Fatal_Status;
+
+
+--What is the average age of offenders for each report type?--
+
+
+SELECT Report_Type, AVG(Offender_Age) AS avg_age
+FROM dbo.crime_data
+GROUP BY Report_Type
+ORDER BY avg_age DESC;
+
+
+--Is there a correlation between the race and gender of offenders in the data?--
+
+
+SELECT Offender_Race, Offender_gender, COUNT(*) AS offender_count
+FROM dbo.crime_data
+GROUP BY Offender_Race, Offender_gender 
+ORDER BY Offender_Race,  Offender_gender;
+
+
+--What is the relationship between offender status and victim fatal status?--
+
+
+SELECT OffenderStatus, Victim_Fatal_Status, COUNT(*) AS incident_count
+FROM dbo.crime_data
+GROUP BY OffenderStatus, Victim_Fatal_Status
+ORDER BY OffenderStatus, Victim_Fatal_Status;
+
+
+--Which category of crime has the highest rate of outcomes 
+--for victims,segmented by race and gender?--
+
+
+SELECT Category, victim_race, victim_gender,
+    COUNT(CASE WHEN Victim_Fatal_Status = 'Fatal' THEN 1 END) AS fatal_count,
+    COUNT (*) AS total_count,
+    COUNT(CASE WHEN Victim_Fatal_Status = 'Fatal' THEN 1 END) * 1.0 / COUNT (*) AS fatal_rate
+FROM dbo.crime_data
+GROUP BY Category, victim_race, victim_gender
+ORDER BY fatal_rate DESC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
