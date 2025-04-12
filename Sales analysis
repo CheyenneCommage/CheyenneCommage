@@ -1,0 +1,116 @@
+--Use CASE--
+
+ --Predict future sales trends based on historical data.--
+
+ --Identify purchasing patterns across different customer segments.--
+
+--Analyze which chocolate categories perform best in various locations.--
+
+--Optimize inventory, pricing, and marketing strategies based on data insights.--
+
+SELECT *
+FROM [dbo].[Chocolate Sales];
+
+--Show the total sales amount for each country descending--
+
+SELECT Country, SUM(Amount) AS total_sales
+FROM [dbo].[Chocolate Sales]
+GROUP BY Country
+ORDER BY total_sales DESC;
+
+
+--Who are the top 5 sales People by the total amount?--
+
+SELECT TOP 5 Sales_Person, SUM(Amount) AS total_sales
+FROM [dbo].[Chocolate Sales]
+GROUP BY Sales_Person
+ORDER BY total_sales DESC;
+
+
+--What is the average boxes shipped per sale by country.--
+
+SELECT Country, AVG(Boxes_Shipped) AS avg_boxes_shipped
+FROM [dbo].[Chocolate Sales]
+GROUP BY Country 
+ORDER BY avg_boxes_shipped DESC;
+
+
+--Show each sales person total sales and how it compared the the company average--
+
+SELECT Sales_Person, 
+SUM(Amount) AS total_sales,
+SUM(Amount) -(SELECT AVG(Amount)
+FROM [dbo].[Chocolate Sales]) 
+AS difference_from_avg
+FROM 
+    [dbo].[Chocolate Sales]
+GROUP BY 
+    Sales_Person
+ORDER BY 
+    total_sales ;
+
+    -- Identify the best-selleing product in each country--
+
+    WITH RankedProducts AS (
+        SELECT 
+            Country,
+            Product,
+            SUM(Amount) AS total_sales,
+            RANK() OVER (PARTITION BY 
+            Country 
+                ORDER BY SUM(Amount) DESC) AS Rank
+        FROM [dbo].[Chocolate Sales]
+        GROUP BY Country, Product
+    )
+    SELECT Country, Product, total_sales
+    FROM RankedProducts
+    WHERE Rank = 1;
+
+    --Compare average sale amounts across countries--
+
+    SELECT 
+        Country,
+        AVG(Amount) AS avg_transaction,
+        AVG(Boxes_Shipped) AS avg_boxes_per_transaction
+    FROM [dbo].[Chocolate Sales]
+    GROUP BY Country
+    ORDER BY avg_transaction DESC;
+
+
+    --Filter high Transaction--
+
+    SELECT *
+    FROM [dbo].[Chocolate Sales]
+    WHERE Amount > 100
+    ORDER BY Amount DESC;
+
+
+    --Analyze shipping volume by country--
+
+    SELECT Country, SUM(Boxes_shipped) AS boxes_shipped
+    FROM [dbo].[Chocolate Sales]
+    GROUP BY Country
+    ORDER BY boxes_shipped;
+
+
+    --Which product generates the most revenue--
+
+
+    SELECT Product, SUM(Amount) AS total_sales
+    FROM [dbo].[Chocolate Sales]
+    GROUP BY Product
+    ORDER BY total_sales DESC;
+
+
+    --Determine the typical Transaction value--
+
+    SELECT AVG(Amount) AS avg_sales_amount
+    FROM [dbo].[Chocolate Sales];
+
+
+    --Identify all countries where sales occurred--
+
+    SELECT DISTINCT Country
+    FROM [dbo].[Chocolate Sales];
+
+
